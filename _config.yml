@@ -1,72 +1,94 @@
-# Site
-title:              CoderPJChao
-bio:                '每天进步一点点'
-description:        "CoderPJChao的博客."
-reading_time:       true
-words_per_minute:   200
-logo:               'assets/img/logo.png'
-background:         'assets/img/placeholder-big.jpg'
-locale:             en_US
-url:                http://coderpjchao.github.io
+# Site settings
+title: CoderPJChao
+SEOTitle: 赵鹏举的博客 | CoderPJChao Blog
+header-img: img/home-bg.jpg
+email: 564357027@qq.com
+description: "CoderPJChao"
+keyword: "CoderPJChao"
+url: "http://huangxuan.me"              # your host, for absolute URL
+baseurl: ""         # for example, '/blog' if your blog hosted on 'host/blog'
 
-# Jekyll
-permalink:          /:title/
-markdown:           kramdown
-highlighter:        rouge
-kramdown:
-  auto_ids:         true
-  footnote_nr:      1
-  entity_output:    as_char
-  toc_levels:       1..6
-  enable_coderay:   false
-mathjax:            true
-sass:
-  sass_dir:         _sass
-  style:            compressed
 
-# Comments
-disqus_shortname:   taylantatli
 
-# Social
-# if you don't have any of social below, comment the line.
-#google:
-  #plus:            #username
-  #analytics:
-  #verify:
-  #ad-client:
-  #ad-slot:
-#bing-verify:
-email:              564357027@qq.com
-#twitter:            username
-facebook:           PJ Chao
-github:             CoderPJChao
-#stackoverflow:      123456/username   from a "http://stackoverflow.com/users/123456/username" link
-#linkedin:           username
-#xing:              username
-#instagram:          username
-#lastfm:             username
-#tumblr:             username
-#pinterest:         username
-#foursquare:        username
-#steam:              username
-#dribbble:          username
-#youtube:            username
-#soundcloud:        username
-weibo:             3407073700 #3407073700
-#flickr:            username
-#codepen:           username
-#keybase:           username
-#xmpp:              username@server.com
+# SNS settings
+RSS: false
+weibo_username:     u/3407073700
+# zhihu_username:     huxpro
+github_username:    CoderPJChao
+#twitter_username:  huxpro
+facebook_username:  CoderPJChao
+
+
+
+# Build settings
+# from 2016, 'pygments' is unsupported on GitHub Pages. Use 'rouge' for highlighting instead.
+highlighter: rouge
+permalink: pretty
+paginate: 10
+exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
+anchorjs: true                          # if you want to customize anchor. check out line:181 of `post.html`
+
+
 
 # Gems
-gems:
-  - jekyll-mentions
-  - jekyll-feed
-  - jekyll-sitemap
-  - jekyll-gist
+# from PR#40, to support local preview for Jekyll 3.0
+gems: [jekyll-paginate]
 
-jekyll-mentions:
-    base_url: https://github.com
 
-# Exclude list
-exclude: [README.md, Gemfile, Gemfile.lock, node_modules, gulpfile.js, package.json, _site, src, vendor, CNAME, LICENSE, Rakefile]
+
+# Markdown settings
+# replace redcarpet to kramdown,
+# although redcarpet can auto highlight code, the lack of header-id make the catalog impossible, so I switch to kramdown
+# document: http://jekyllrb.com/docs/configuration/#kramdown
+markdown: kramdown
+kramdown:
+  input: GFM                            # use Github Flavored Markdown !important
+
+
+
+# Disqus settings
+#disqus_username: _your_disqus_short_name_
+
+# Duoshuo settings
+############## duoshuo_username: huxblog
+# Share component is depend on Comment so we can NOT use share only.
+############## duoshuo_share: true                     # set to false if you want to use Comment without Sharing
+
+
+
+
+# Analytics settings
+# Baidu Analytics
+ba_track_id: 4cc1f2d8f3067386cc5cdb626a202900
+# Google Analytics
+ga_track_id: 'UA-49627206-1'            # Format: UA-xxxxxx-xx
+ga_domain: huangxuan.me
+
+
+
+# Sidebar settings
+sidebar: true                           # whether or not using Sidebar.
+sidebar-about-description: "每天进步一点点。<br/>世界那么大，我想去看看。"
+sidebar-avatar: /img/avatar-hux.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+
+
+
+# Featured Tags
+featured-tags: true                     # whether or not using Feature-Tags
+featured-condition-size: 1              # A tag will be featured if the size of it is more than this condition value
+
+
+
+# Friends
+friends: [
+    {
+        title: "Pegu_Blog",
+        href: "http://CoderPJChao.github.io"
+    },{
+        title: "Pegu_CSDN",
+        href: "http://blog.csdn.net/qq_33834670"
+    },{
+        title: "Pegu_简书",
+        href: "http://www.jianshu.com/users/08eecf6cf70b"
+    }
+]
