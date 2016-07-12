@@ -1,9 +1,21 @@
-# HuxBlog Boilerplate
+> “每天进步一点点。 ”
 
-##### This is the boilerplate of [Hux Blog](https://github.com/Huxpro/huxpro.github.io), all documents is over there!
 
-#### [View Boilerplate &rarr;](http://huangxuan.me/huxblog-boilerplate/)
+## Profile
 
-#### [View Live Hux Blog &rarr;](http://huangxuan.me)
+Hey，我是Pegu（赵鹏举），程序“猿”，负责iOS前端开发。
 
-## If you like Hux Blog, Please star [huxpro.github.io repo](https://github.com/Huxpro/huxpro.github.io) instead of this! Thank you!
+作为一个程序员，一直想有一个属于自己的地方写点儿东西。之前因为时间问题，所有没有去折腾。现在抽出一段时间，终于有自己的地方可以好好写点儿东西了，Fighting ！！！
+
+<p id = "build"></p>
+---
+
+## 后续
+
+随后会添加评论模块，方便大家给本人提一些建议，还望大家给捧捧场。（已添加）
+
+如果你恰好逛到了这里，希望您能关注下我的博客噢 ！~
+
+—— Pegu
+
+
