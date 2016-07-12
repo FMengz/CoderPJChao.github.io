@@ -1,11 +1,11 @@
 # Site settings
 title: CoderPJChao
-SEOTitle: 赵鹏举的博客 | CoderPJChao Blog
+SEOTitle: 赵鹏举 | CoderPJChao Blog
 header-img: img/home-bg.jpg
 email: 564357027@qq.com
 description: "CoderPJChao"
 keyword: "CoderPJChao"
-url: "http://huangxuan.me"              # your host, for absolute URL
+url: "http://coderpjchao.github.io"              # your host, for absolute URL
 baseurl: ""         # for example, '/blog' if your blog hosted on 'host/blog'
 
 
