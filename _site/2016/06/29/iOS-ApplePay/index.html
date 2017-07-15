@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="CoderPJChao">
+    <meta name="keyword"  content="CoderPJChao">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>iOS-APP集成Apple Pay指南 - 赵鹏举 | Pegu Blog</title>
+
+    <link rel="canonical" href="http://coderpjchao.github.io/2016/06/29/iOS-ApplePay/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/pegu-blog.min.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Pegu change font-awesome CDN to qiniu -->
+    <link href="http://cdn.staticfile.org/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Pegu Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">CoderPJChao</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Pegu:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="pegublog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/about/">About</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/tags/">Tags</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#pegublog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/post-bg-unix-linux.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/post-bg-unix-linux.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/#iOS" title="iOS">iOS</a>
+                        
+                        <a class="tag" href="/tags/#每天进步一点点" title="每天进步一点点">每天进步一点点</a>
+                        
+                        <a class="tag" href="/tags/#前端开发" title="前端开发">前端开发</a>
+                        
+                    </div>
+                    <h1>iOS-APP集成Apple Pay指南</h1>
+                    
+                    
+                    <h2 class="subheading">每天进步一点点</h2>
+                    
+                    <span class="meta">Posted by Pegu on June 29, 2016</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+				<blockquote>
+  <p>版权声明：本文为作者原创文章， 如果有相同的或者相似的，那将是我的荣幸。</p>
+</blockquote>
+
+<h3 id="apple-pay">Apple Pay是什么？</h3>
+
+<p>Apple Pay目前在国内上线已有一段时间，这意味着消费者可通过 <code class="highlighter-rouge">苹果手机、苹果手表</code>等智能设备来进行支付，它的功能类似一个“卡包”，讲实体银行卡虚拟到手机里，用户可以绑定<code class="highlighter-rouge">储蓄卡或信用卡</code>实现刷卡支付。</p>
+
+<hr />
+
+<p>###为什么使用Apple Pay</p>
+
+<p><strong>从理论上看：</strong>微信支付也好、支付宝也好，均属于“结算平台”，他们会透过银联，从你的银行里提出现金代为托管；直至你把金钱放回银行之前，都只能在微信/支付宝上使用。但 Apple Pay 只是一张电子信用卡，你的钱仍然在银行里，付款时直接从银联向银行提取。而从技上术上，微信支付也好、支付宝也好，在付款时都要透过相机或条码机，读取一次性的二维码；而 Apple Pay 则透过近场通信 (NFC) 的方式，读取 iPhone 上的 Token 令牌。</p>
+
+<p><strong>从实际上看：</strong>目前微信支付及支付宝的优势在于低入场门槛：商店只要有台智能手机，就毋须为移动支付购入/租用新设备，而消费者也不需要很高端的旗舰级设备。而 Apple Pay 优势是良好的用户体验，使用 Apple Pay 付费，既安全、又快捷、隐私度也比较高。</p>
+
+<hr />
+
+<p>###设备支持有哪些要求？</p>
+
+<p>Apple Pay需要支持<code class="highlighter-rouge">NFC</code>功能，目前只限于iPhone 6s、iPhone 6s Plus、iPhone 6、iPhone 6 Plus和Apple Watch这几款设备使用。同时，用户需讲手机操作系统版本升级到<code class="highlighter-rouge">iOS 9.2</code>以上，Apple Watch则需要<code class="highlighter-rouge">Watch OS 2.1</code>版本以上。</p>
+
+<hr />
+
+<p>###Apple Pay如何使用？</p>
+
+<p>在<code class="highlighter-rouge">iPhone</code>上，先打开系统自带的<code class="highlighter-rouge">Wallet</code>应用，后点右上角的<code class="highlighter-rouge">➕</code>符号，这时你有两个选择，可以用摄像头拍卡就能识别，也可以手动输入，或者通过iTunes绑定，至于<code class="highlighter-rouge">Apple Watch</code>怎么使用，应该操作差不多，具体情况本人未去实践，还望谅解。</p>
+
+<hr />
+
+<p>###Apple Pay环境配置</p>
+
+<ul>
+  <li>
+    <p>配置Bundle ID
+<img src="http://upload-images.jianshu.io/upload_images/1628418-f6b2e3c0397a1001.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="14671699608022.jpg" /></p>
+  </li>
+  <li>
+    <p>添加商户的ID
+<img src="http://upload-images.jianshu.io/upload_images/1628418-6455d68fbbe679ec.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="14671702234549.jpg" /></p>
+  </li>
+  <li>
+    <p>把工程中对应的Bundle ID添加进去
+<img src="http://upload-images.jianshu.io/upload_images/1628418-f4414773db7b7aa7.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="14671703281837.jpg" /></p>
+  </li>
+  <li>
+    <p>点击创建好的商户ID
+<img src="http://upload-images.jianshu.io/upload_images/1628418-e8bf3abc959c4113.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="14671705166905.jpg" /></p>
+  </li>
+  <li>
+    <p>编辑商户ID
+<img src="http://upload-images.jianshu.io/upload_images/1628418-170da8ae1019f459.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="14671711439975.jpg" /></p>
+  </li>
+  <li>
+    <p>添加CSR文件
+<img src="http://upload-images.jianshu.io/upload_images/1628418-ca519e9048761690.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="14671714784874.jpg" /></p>
+  </li>
+  <li>
+    <p>下载配置好的商户ID
+<img src="http://upload-images.jianshu.io/upload_images/1628418-f1f11784f2f03016.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="14671715087391.jpg" />
+<img src="http://upload-images.jianshu.io/upload_images/1628418-a6671b1c8a78f14c.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="14671715713657.jpg" /></p>
+  </li>
+  <li>
+    <p>创建对应的App IDs
+<img src="http://upload-images.jianshu.io/upload_images/1628418-2f5ba9a6162d8283.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="14671716587260.jpg" /></p>
+  </li>
+  <li>
+    <p>勾选Apple Pay
+<img src="http://upload-images.jianshu.io/upload_images/1628418-a30994b9ee5c9211.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="14671717034194.jpg" /></p>
+  </li>
+  <li>
+    <p>配置支付环境
+<img src="http://upload-images.jianshu.io/upload_images/1628418-374d448ab749a6cf.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="14671720852032.jpg" /></p>
+  </li>
+  <li>
+    <p>Clean一下工程，如果工程自动添加此文件则以上步骤正确
+<img src="http://upload-images.jianshu.io/upload_images/1628418-f35657a44fdb3594.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="14671720005926.jpg" /></p>
+  </li>
+</ul>
+
+<hr />
+
+<p>###App项目内部集成方式</p>
+
+<p><strong>Apple Pay</strong>使用了<strong>PassKit</strong>框架，所以需要导入相应头文件</p>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="cp">#import &lt;PassKit/PassKit.h&gt;
+</span></code></pre>
+</div>
+
+<p>接收<strong>Apple Pay</strong>处理信息的回调，需要遵守协议，实现相应的代理方法</p>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="k">@interface</span> <span class="nc">ViewController</span> <span class="p">()</span><span class="o">&lt;</span><span class="n">PKPaymentAuthorizationViewControllerDelegate</span><span class="o">&gt;</span>
+<span class="k">@end</span>
+</code></pre>
+</div>
+<p>为了方便测试，触发支付操作时间写在<code class="highlighter-rouge">touchBegan:</code>方法中</p>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">touchesBegan</span><span class="p">:(</span><span class="n">NSSet</span><span class="o">&lt;</span><span class="n">UITouch</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="p">)</span><span class="nv">touches</span> <span class="nf">withEvent</span><span class="p">:(</span><span class="n">UIEvent</span> <span class="o">*</span><span class="p">)</span><span class="nv">event</span> <span class="p">{</span>
+    <span class="c1">// code...
+</span><span class="p">}</span>
+</code></pre>
+</div>
+
+<p>具体代码实现如下：</p>
+
+<ul>
+  <li>判断设备是否支持Apple Pay快捷支付功能</li>
+</ul>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">[</span><span class="n">PKPaymentAuthorizationViewController</span> <span class="nf">canMakePayments</span><span class="p">])</span> <span class="p">{</span>
+        <span class="c1">// 提示用户该设备不支持Apple Pay快捷支付功能
+</span>        <span class="c1">// code...
+</span>        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+</code></pre>
+</div>
+
+<ul>
+  <li>判断设备是否绑定过可支付的银行卡</li>
+</ul>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code>	<span class="cm">/**
+     *  若没有可用银行卡，则跳转到设置银行卡界面
+     *  PKPaymentNetworkVisa                Visa国际卡
+     *  PKPaymentNetworkChinaUnionPay       中国银联
+     *  PKPaymentNetworkDiscover            Discover(美国流行的信用卡)
+     */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">[</span><span class="n">PKPaymentAuthorizationViewController</span> <span class="nf">canMakePaymentsUsingNetworks</span><span class="p">:@[</span><span class="n">PKPaymentNetworkVisa</span><span class="p">,</span> <span class="n">PKPaymentNetworkChinaUnionPay</span><span class="p">,</span> <span class="n">PKPaymentNetworkDiscover</span><span class="p">]])</span> <span class="p">{</span>
+        
+        <span class="c1">// 进入设置银行卡界面
+</span>        <span class="p">[[[</span><span class="n">PKPassLibrary</span> <span class="nf">alloc</span><span class="p">]</span> <span class="nf">init</span><span class="p">]</span> <span class="nf">openPaymentSetup</span><span class="p">];</span>
+        
+    <span class="p">}</span>
+
+</code></pre>
+</div>
+
+<ul>
+  <li>设置商品参数</li>
+</ul>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code>	<span class="c1">// 创建商品
+</span>    <span class="n">NSDecimalNumber</span> <span class="o">*</span><span class="n">firstAmount</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSDecimalNumber</span> <span class="nf">decimalNumberWithString</span><span class="p">:</span><span class="s">@"1.11"</span><span class="p">];</span>
+    <span class="n">NSDecimalNumber</span> <span class="o">*</span><span class="n">secondAmount</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSDecimalNumber</span> <span class="nf">decimalNumberWithString</span><span class="p">:</span><span class="s">@"2.22"</span><span class="p">];</span>
+    <span class="n">NSDecimalNumber</span> <span class="o">*</span><span class="n">thirdAmount</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSDecimalNumber</span> <span class="nf">decimalNumberWithString</span><span class="p">:</span><span class="s">@"3.33"</span><span class="p">];</span>
+    
+    <span class="n">NSDecimalNumber</span> <span class="o">*</span><span class="n">amountSum</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSDecimalNumber</span> <span class="nf">zero</span><span class="p">];</span>
+    <span class="n">amountSum</span> <span class="o">=</span> <span class="p">[</span><span class="n">amountSum</span> <span class="nf">decimalNumberByAdding</span><span class="p">:</span><span class="n">firstAmount</span><span class="p">];</span>
+    <span class="n">amountSum</span> <span class="o">=</span> <span class="p">[</span><span class="n">amountSum</span> <span class="nf">decimalNumberByAdding</span><span class="p">:</span><span class="n">secondAmount</span><span class="p">];</span>
+    <span class="n">amountSum</span> <span class="o">=</span> <span class="p">[</span><span class="n">amountSum</span> <span class="nf">decimalNumberByAdding</span><span class="p">:</span><span class="n">thirdAmount</span><span class="p">];</span>
+    
+    <span class="cm">/**
+     *  @param label        商品名称（英文名称默认全部显示大写）
+     *  @param amount       商品价格 - NSDecimalNumber类型
+     */</span>
+    <span class="n">PKPaymentSummaryItem</span> <span class="o">*</span><span class="n">firstItem</span> <span class="o">=</span> <span class="p">[</span><span class="n">PKPaymentSummaryItem</span> <span class="nf">summaryItemWithLabel</span><span class="p">:</span><span class="s">@"FirstItem"</span> <span class="nf">amount</span><span class="p">:</span><span class="n">firstAmount</span><span class="p">];</span>
+    <span class="n">PKPaymentSummaryItem</span> <span class="o">*</span><span class="n">secondItem</span> <span class="o">=</span> <span class="p">[</span><span class="n">PKPaymentSummaryItem</span> <span class="nf">summaryItemWithLabel</span><span class="p">:</span><span class="s">@"SecondItem"</span> <span class="nf">amount</span><span class="p">:</span><span class="n">secondAmount</span><span class="p">];</span>
+    <span class="n">PKPaymentSummaryItem</span> <span class="o">*</span><span class="n">thirdItem</span> <span class="o">=</span> <span class="p">[</span><span class="n">PKPaymentSummaryItem</span> <span class="nf">summaryItemWithLabel</span><span class="p">:</span><span class="s">@"ThirdtItem"</span> <span class="nf">amount</span><span class="p">:</span><span class="n">thirdAmount</span><span class="p">];</span>
+    
+    <span class="n">PKPaymentSummaryItem</span> <span class="o">*</span><span class="n">itemsSum</span> <span class="o">=</span> <span class="p">[</span><span class="n">PKPaymentSummaryItem</span> <span class="nf">summaryItemWithLabel</span><span class="p">:</span><span class="s">@"PJChao"</span> <span class="nf">amount</span><span class="p">:</span><span class="n">amountSum</span><span class="p">];</span>
+</code></pre>
+</div>
+
+<ul>
+  <li>创建支付请求（基本配置）</li>
+</ul>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code>	<span class="n">PKPaymentRequest</span> <span class="o">*</span><span class="n">request</span> <span class="o">=</span> <span class="p">[[</span><span class="n">PKPaymentRequest</span> <span class="nf">alloc</span><span class="p">]</span> <span class="nf">init</span><span class="p">];</span>
+    
+    <span class="c1">// 设置商户ID（merchant IDs）
+</span>    <span class="n">request</span><span class="p">.</span><span class="n">merchantIdentifier</span> <span class="o">=</span> <span class="s">@"merchant.com.zpj.ApplePayTest"</span><span class="p">;</span>
+    
+    <span class="c1">// 设置国家代码(中国大陆)
+</span>    <span class="n">request</span><span class="p">.</span><span class="n">countryCode</span> <span class="o">=</span> <span class="s">@"CN"</span><span class="p">;</span>
+    
+    <span class="c1">// 设置支付货币(人民币)
+</span>    <span class="n">request</span><span class="p">.</span><span class="n">currencyCode</span> <span class="o">=</span> <span class="s">@"CNY"</span><span class="p">;</span>
+    
+    <span class="c1">// 设置商户的支付标准(3DS支付方式必须支持，其他方式可选)
+</span>    <span class="n">request</span><span class="p">.</span><span class="n">merchantCapabilities</span> <span class="o">=</span> <span class="n">PKMerchantCapability3DS</span><span class="p">;</span>
+    <span class="n">request</span><span class="p">.</span><span class="n">paymentSummaryItems</span> <span class="o">=</span> <span class="p">@[</span><span class="n">firstItem</span><span class="p">,</span> <span class="n">secondItem</span><span class="p">,</span> <span class="n">thirdItem</span><span class="p">,</span> <span class="n">itemsSum</span><span class="p">];</span>
+    
+    <span class="cm">/**
+     *  以上参数都是必须的
+     *  以下参数不是必须的
+     */</span>
+     
+    <span class="c1">// 设置收据内容
+</span>    <span class="n">request</span><span class="p">.</span><span class="n">requiredBillingAddressFields</span> <span class="o">=</span> <span class="n">PKAddressFieldAll</span><span class="p">;</span>
+    
+    <span class="c1">// 设置送货内容
+</span>    <span class="n">request</span><span class="p">.</span><span class="n">requiredShippingAddressFields</span> <span class="o">=</span> <span class="n">PKAddressFieldAll</span><span class="p">;</span>
+    
+    <span class="c1">// 设置送货方式
+</span>    <span class="n">PKShippingMethod</span> <span class="o">*</span><span class="n">method</span> <span class="o">=</span> <span class="p">[</span><span class="n">PKShippingMethod</span> <span class="nf">summaryItemWithLabel</span><span class="p">:</span><span class="s">@"阿敏"</span> <span class="nf">amount</span><span class="p">:[</span><span class="n">NSDecimalNumber</span> <span class="nf">decimalNumberWithString</span><span class="p">:</span><span class="s">@"10.00"</span><span class="p">]];</span>
+    <span class="n">method</span><span class="p">.</span><span class="n">identifier</span> <span class="o">=</span> <span class="s">@"阿敏物流"</span><span class="p">;</span>
+    <span class="n">method</span><span class="p">.</span><span class="n">detail</span> <span class="o">=</span> <span class="s">@"12小时到达"</span><span class="p">;</span>
+    
+    <span class="n">request</span><span class="p">.</span><span class="n">shippingMethods</span> <span class="o">=</span> <span class="p">@[</span><span class="n">method</span><span class="p">];</span>
+</code></pre>
+</div>
+
+<ul>
+  <li>显示支付界面</li>
+</ul>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code>	<span class="n">PKPaymentAuthorizationViewController</span> <span class="o">*</span><span class="n">paymentVC</span> <span class="o">=</span> <span class="p">[[</span><span class="n">PKPaymentAuthorizationViewController</span> <span class="nf">alloc</span><span class="p">]</span> <span class="nf">initWithPaymentRequest</span><span class="p">:</span><span class="n">request</span><span class="p">];</span>
+    <span class="n">paymentVC</span><span class="p">.</span><span class="n">delegate</span> <span class="o">=</span> <span class="n">self</span><span class="p">;</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">paymentVC</span> <span class="o">==</span> <span class="nb">nil</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+    
+    <span class="p">[</span><span class="n">self</span> <span class="nf">presentViewController</span><span class="p">:</span><span class="n">paymentVC</span> <span class="nf">animated</span><span class="p">:</span><span class="nb">YES</span> <span class="nf">completion</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
+</code></pre>
+</div>
+
+<ul>
+  <li>代理方法的实现</li>
+</ul>
+
+<div class="language-objc highlighter-rouge"><pre class="highlight"><code><span class="cp">#pragma mark - &lt;PKPaymentAuthorizationViewControllerDelegate&gt;
+</span><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">paymentAuthorizationViewController</span><span class="p">:(</span><span class="n">PKPaymentAuthorizationViewController</span> <span class="o">*</span><span class="p">)</span><span class="nv">controller</span>
+                       <span class="nf">didAuthorizePayment</span><span class="p">:(</span><span class="n">PKPayment</span> <span class="o">*</span><span class="p">)</span><span class="nv">payment</span>
+                                <span class="nf">completion</span><span class="p">:(</span><span class="kt">void</span> <span class="p">(</span><span class="o">^</span><span class="p">)(</span><span class="n">PKPaymentAuthorizationStatus</span> <span class="n">status</span><span class="p">))</span><span class="nv">completion</span>
+<span class="p">{</span>
+    <span class="cm">/**
+     *  在这里支付信息应发送给服务器/第三方的SDK（银联SDK/易宝支付SDK/易智付SDK等）
+     *  再根据服务器返回的支付成功与否进行不同处理
+     *  这里直接返回支付成功
+     */</span>
+	<span class="n">completion</span><span class="p">(</span><span class="n">PKPaymentAuthorizationStatusSuccess</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">paymentAuthorizationViewControllerDidFinish</span><span class="p">:(</span><span class="n">PKPaymentAuthorizationViewController</span> <span class="o">*</span><span class="p">)</span><span class="nv">controller</span>
+<span class="p">{</span>
+    <span class="c1">// 点击支付/取消按钮隐藏界面
+</span>    <span class="p">[</span><span class="n">controller</span> <span class="nf">dismissViewControllerAnimated</span><span class="p">:</span><span class="nb">YES</span> <span class="nf">completion</span><span class="p">:</span><span class="nb">nil</span><span class="p">];</span>
+<span class="p">}</span>
+
+</code></pre>
+</div>
+
+<p>###附上测试结果
+<img src="http://upload-images.jianshu.io/upload_images/1628418-2f32a91c15544167.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="14671851652964.jpg" />
+<img src="http://upload-images.jianshu.io/upload_images/1628418-99b3c630f75b57f3.gif?imageMogr2/auto-orient/strip" alt="test.gif" />
+<img src="http://upload-images.jianshu.io/upload_images/1628418-d526e36f6983757d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="14671854207186.jpg" /></p>
+
+<p>终于写完了，如果有什么问题，还望大神给予指点，Thank you。</p>
+
+
+
+                <hr>
+
+                
+                <!-- 多说 Share start -->
+                <div class="ds-share"
+                    style="text-align: right"
+                    data-thread-key="/2016/06/29/iOS-ApplePay"
+                    data-title="iOS-APP集成Apple Pay指南"
+                    data-url="http://coderpjchao.github.io/2016/06/29/iOS-ApplePay/"
+                    data-images="http://coderpjchao.github.io/img/post-bg-unix-linux.jpg"
+                    data-content="
+  版权声明：本文为作者原创文章， 如果有相同的或者相似的，那将是我的荣幸。
+
+
+Apple Pay是什么？
+
+Apple Pay目前在国内上线已有一段... | 赵鹏举 | Pegu Blog " >
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- 多说 Share end-->
+                
+
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2016/04/20/iOS-%E9%9F%B3%E9%87%8F/" data-toggle="tooltip" data-placement="top" title="iOS-调整系统屏幕亮度和音量">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2016/07/08/iOS-%E6%8B%BC%E9%9F%B3/" data-toggle="tooltip" data-placement="top" title="iOS-汉字转拼音（未完待续）">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+
+                
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread"
+                        data-thread-key="/2016/06/29/iOS-ApplePay"
+                        data-title="iOS-APP集成Apple Pay指南"
+                        data-url="http://coderpjchao.github.io/2016/06/29/iOS-ApplePay/" >
+                    </div>
+                </div>
+                <!-- 多说评论框 end -->
+                
+
+                
+
+            </div>
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+        				
+                            
+        				
+                            
+                				<a href="/tags/#iOS" title="iOS" rel="3">
+                                    iOS
+                                </a>
+                            
+        				
+                            
+                				<a href="/tags/#每天进步一点点" title="每天进步一点点" rel="3">
+                                    每天进步一点点
+                                </a>
+                            
+        				
+                            
+                				<a href="/tags/#前端开发" title="前端开发" rel="3">
+                                    前端开发
+                                </a>
+                            
+        				
+        			</div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+                    
+                        <li><a href="http://CoderPJChao.github.io">Pegu_Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/qq_33834670">Pegu_CSDN</a></li>
+                    
+                        <li><a href="http://www.jianshu.com/users/08eecf6cf70b">Pegu_简书</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    // dynamic User by Pegu
+    var _user = 'CoderPJChao';
+
+    // duoshuo comment query.
+    var duoshuoQuery = {short_name: _user };
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0]
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+</script>
+<!-- 多说公共JS代码 end -->
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    
+                    
+
+                    <!-- add Weibo, Zhihu by Pegu, add target = "_blank" to <a> by Pegu -->
+                    
+                    
+                    <li>
+                        <a target="_blank" href="http://weibo.com/u/3407073700">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+
+                    
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/CoderPJChao">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/CoderPJChao">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; CoderPJChao 2017
+                    <br>
+                    Theme by <a href="http://coderpjchao.github.io">Pegu</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=CoderPJChao&repo=CoderPJChao.github.io&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/pegu-blog.min.js "></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so PeguBlog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("http://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

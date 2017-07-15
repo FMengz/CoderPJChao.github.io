@@ -10,9 +10,9 @@
     <meta name="keyword"  content="CoderPJChao">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>About - 赵鹏举 | Pegu Blog</title>
+    <title>iOS-汉字转拼音（未完待续） - 赵鹏举 | Pegu Blog</title>
 
-    <link rel="canonical" href="http://coderpjchao.github.io/about/">
+    <link rel="canonical" href="http://coderpjchao.github.io/2016/07/08/iOS-%E6%8B%BC%E9%9F%B3/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -123,122 +123,236 @@
 </script>
 
 
-    <!-- Page Header -->
-<header class="intro-header" style="background-image: url('/img/about-bg.jpg')">
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/post-bg-unix-linux.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/post-bg-unix-linux.jpg')
+    }
+</style>
+<header class="intro-header" >
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
-                <div class="site-heading">
-                    <h1>About</h1>
-                    <!--<hr class="small">-->
-                    <span class="subheading">Hey, this is Pegu.</span>
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/#iOS" title="iOS">iOS</a>
+                        
+                        <a class="tag" href="/tags/#每天进步一点点" title="每天进步一点点">每天进步一点点</a>
+                        
+                        <a class="tag" href="/tags/#前端开发" title="前端开发">前端开发</a>
+                        
+                    </div>
+                    <h1>iOS-汉字转拼音（未完待续）</h1>
+                    
+                    
+                    <h2 class="subheading">每天进步一点点</h2>
+                    
+                    <span class="meta">Posted by Pegu on July 8, 2016</span>
                 </div>
             </div>
         </div>
     </div>
 </header>
 
-<!-- Main Content -->
-<div class="container">
-	<div class="row">
-        
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
 
-<!-- USE SIDEBAR -->
     <!-- Post Container -->
-    		<div class="
-                col-lg-8 col-lg-offset-1
-                col-md-8 col-md-offset-1
-                col-sm-12
-                col-xs-12
-                post-container
-            ">
-    			<!-- Language Selector -->
-<!-- <select onchange= "onLanChange(this.options[this.options.selectedIndex].value)">
-    <option value="0" selected> 中文 Chinese </option>
-    <option value="1"> 英语 English </option>
-</select> -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
 
-<!-- Chinese Version -->
-<div class="zh post-container">
-    <blockquote>
-        每天进步一点点。<br>
-        世界那么大，我想去看看。
-    </blockquote>
-    <h2>Profile</h2>
-    <br>
-   Hey，我是Pegu（赵鹏举），iOS程序“猿”，前北京三才科技有限公司成员，负责iOS前端开发。目前任职于Tarena时代科技集团有限公司。<br>
-   <br>作为一个程序员，一直想有一个属于自己的地方写点儿东西。之前因为时间原因，所有没有去折腾，就在<a href="http://www.jianshu.com/users/08eecf6cf70b/latest_articles">简书</a>里写一些Blog（ ps: 文章还比较少，随后会逐渐丰富里面的内容 ）。现在，终于有一个可以任意修改界面，且属于自己的地盘儿，去好好写点儿东西了，Fighting ！！！ <br><br>
+				<p>Core Foundation包含文字转拼音的相应方法，而且还支持声调。具体过程如下：</p>
 
-   <hr>
+<ul>
+  <li>
+    <p>首先假设有一段文字</p>
 
-    <h2>后续</h2>
-    <br>随后会添加评论模块，方便大家给我提一些建议，还望大家捧捧场。<br>
-    <br>如果你恰好逛到了这里，希望您能关注下我的博客噢 ！~ <br>
-    <p style="text-align:right;">
-        —— Pegu 
-        <!-- <a href=""></a> -->
-    </p>
+    <p><code class="highlighter-rouge">objc
+  NSString *str = @"小敏";
+ </code></p>
+  </li>
+  <li>
+    <p>文字→带声调的拼音</p>
 
-</div>
+    <p><code class="highlighter-rouge">objc
+  // 注意：以下操作必须先将不可变字符串转化为可变字符串才能将汉字转化成拼音
+  // 👇代码可替换为：NSMutableString *strM = [str mutableCopy];
+  NSMutableString *strM = [NSMutableString stringWithString:str];
+  // 转成带声调的拼音
+  CFStringTransform((CFMutableStringRef)str, NULL, kCFStringTransformToLatin, false);
+NSLog(@"%@", strM);
+输出结果：xiǎo mǐn
+ </code></p>
+  </li>
+  <li>
+    <p>文字→不带声调的拼音</p>
 
-<!-- English Version -->
-<div class="en post-container">
-    <blockquote>
-        Designer or Engineer, things in between.
-    </blockquote>
+    <p><code class="highlighter-rouge">objc
+// 转成不带声调的拼音
+  CFStringTransform((CFMutableStringRef)strM, NULL, kCFStringTransformStripDiacritics, false);
+NSLog(@"%@", strM);
+输出结果：xiao min
+ </code></p>
+  </li>
+  <li>
+    <p>转换的拼音之间会有空格，可根据需要进行删除</p>
 
-    <p>
-        Your work is going to fill a large part of your life, and the only way to be truly satisfied is to do what you believe is great work. And the only way to do great work is to love what you do. If you haven’t found it yet, keep looking. Don’t settle. As with all matters of the heart, you’ll know when you find it.
-    </p>
+    <p><code class="highlighter-rouge">objc
+// 删除拼音之间的空格
+  NSString *resultStr = [strM stringByReplacingOccurrencesOfString:@" " withString:@""];
+NSLog(@"%@", resultStr);
+输出结果：xiaomin
+ </code></p>
+  </li>
+  <li>
+    <p>获取拼音首字母（大写字母）</p>
 
-    <p>
-    If you want to live your life in a creative way, as an artist, you have to not look back too much. You have to be willing to take whatever you’ve done and whoever you were and throw them away.
-    </p>
+    <p><code class="highlighter-rouge">objc
+// 获取首字母并转换为大写字母
+  NSString *firstLetter = [strM substringToIndex:1].uppercaseString;
+NSLog(@"%@", firstLetter);
+输出结果：X
+ </code></p>
+  </li>
+</ul>
 
-    <p style="text-align:right;">
-    -- Steve Jobs
-    </p>
-
-</div>
-
-<!-- Handle Language Change -->
-<script type="text/javascript">
-    var $zh = document.querySelector(".zh");
-    var $en = document.querySelector(".en");
-    function onLanChange(index){
-        if(index == 0){
-            $zh.style.display = "block";
-            $en.style.display = "none";
-        }else{
-            $en.style.display = "block";
-            $zh.style.display = "none";
-        }
-    }
-    onLanChange(0);
-</script>
+<blockquote>
+  <p>注意：这种转换方式仅适用于性能要求不高的场景！自行决定是否使用！</p>
+</blockquote>
 
 
 
+                <hr>
 
-<!-- 多说评论框 start -->
-<div class="comment">
-    <div class="ds-thread"
-    
-        data-thread-id="6306462460270347000"
-    
+                
+                <!-- 多说 Share start -->
+                <div class="ds-share"
+                    style="text-align: right"
+                    data-thread-key="/2016/07/08/iOS-拼音"
+                    data-title="iOS-汉字转拼音（未完待续）"
+                    data-url="http://coderpjchao.github.io/2016/07/08/iOS-%E6%8B%BC%E9%9F%B3/"
+                    data-images="http://coderpjchao.github.io/img/post-bg-unix-linux.jpg"
+                    data-content="Core Foundation包含文字转拼音的相应方法，而且还支持声调。具体过程如下：
 
-    data-title="About"
-    data-url="http://coderpjchao.github.io/about/"></div>
-</div>
-<!-- 多说评论框 end -->
 
-<!-- Duoshuo hacking -->
-<input id="dsUser" type="hidden" value="CoderPJChao"  />
+  
+    首先假设有一段文字
+
+    objc
+  NS... | 赵鹏举 | Pegu Blog " >
+                    <div class="ds-share-inline">
+                      <ul  class="ds-share-icons-16">
+                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
+                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
+                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
+                      </ul>
+                      <div class="ds-share-icons-more">
+                      </div>
+                    </div>
+                <hr>
+                </div>
+                <!-- 多说 Share end-->
+                
+
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2016/06/29/iOS-ApplePay/" data-toggle="tooltip" data-placement="top" title="iOS-APP集成Apple Pay指南">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+
+                
+                <!-- 多说评论框 start -->
+                <div class="comment">
+                    <div class="ds-thread"
+                        data-thread-key="/2016/07/08/iOS-拼音"
+                        data-title="iOS-汉字转拼音（未完待续）"
+                        data-url="http://coderpjchao.github.io/2016/07/08/iOS-%E6%8B%BC%E9%9F%B3/" >
+                    </div>
+                </div>
+                <!-- 多说评论框 end -->
+                
+
+                
+
+            </div>
+
+    <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+        				
+                            
+        				
+                            
+                				<a href="/tags/#iOS" title="iOS" rel="3">
+                                    iOS
+                                </a>
+                            
+        				
+                            
+                				<a href="/tags/#每天进步一点点" title="每天进步一点点" rel="3">
+                                    每天进步一点点
+                                </a>
+                            
+        				
+                            
+                				<a href="/tags/#前端开发" title="前端开发" rel="3">
+                                    前端开发
+                                </a>
+                            
+        				
+        			</div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+                    
+                        <li><a href="http://CoderPJChao.github.io">Pegu_Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/qq_33834670">Pegu_CSDN</a></li>
+                    
+                        <li><a href="http://www.jianshu.com/users/08eecf6cf70b">Pegu_简书</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
 
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
-    // dynamic User hacking by Pegu
-    var _user = document.getElementById('dsUser').value;
+    // dynamic User by Pegu
+    var _user = 'CoderPJChao';
+
     // duoshuo comment query.
     var duoshuoQuery = {short_name: _user };
     (function() {
@@ -256,112 +370,42 @@
 
 
 
-    		</div>
-    <!-- Sidebar Container -->
-            <div class="
-                col-lg-3 col-lg-offset-0
-                col-md-3 col-md-offset-0
-                col-sm-12
-                col-xs-12
-                sidebar-container
-            ">
-                <!-- Featured Tags -->
-                
-                <section>
-                    <hr class="hidden-sm hidden-xs">
-                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
-                    <div class="tags">
-                        
-                            
-                        
-                            
-                                <a href="/tags/#iOS" title="iOS" rel="3">
-                                    iOS
-                                </a>
-                            
-                        
-                            
-                                <a href="/tags/#每天进步一点点" title="每天进步一点点" rel="3">
-                                    每天进步一点点
-                                </a>
-                            
-                        
-                            
-                                <a href="/tags/#前端开发" title="前端开发" rel="3">
-                                    前端开发
-                                </a>
-                            
-                        
-                    </div>
-                </section>
-                
 
-                <!-- Short About -->
-                <section class="visible-md visible-lg">
-                    <hr><h5><a href="/about/">ABOUT ME</a></h5>
-                    <div class="short-about">
-                        
-                            <img src="/img/avatar-hux.jpg" />
-                        
-                        
-                            <p>每天进步一点点。<br/>世界那么大，我想去看看。</p>
-                        
-                        <!-- SNS Link -->
-                        <ul class="list-inline">
-                            
-                            
-                            
-                            
-                            <li>
-                                <a target="_blank" href="http://weibo.com/u/3407073700">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fa fa-circle fa-stack-2x"></i>
-                                        <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </li>
-                            
-                            
-                            <li>
-                                <a target="_blank" href="https://www.facebook.com/CoderPJChao">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fa fa-circle fa-stack-2x"></i>
-                                        <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </li>
-                            
-                            
-                            <li>
-                                <a target="_blank" href="https://github.com/CoderPJChao">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fa fa-circle fa-stack-2x"></i>
-                                        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </li>
-                            
-                        </ul>
-                    </div>
-                </section>
-                <!-- Friends Blog -->
-                
-                <hr>
-                <h5>FRIENDS</h5>
-                <ul class="list-inline">
-                    
-                        <li><a href="http://CoderPJChao.github.io">Pegu_Blog</a></li>
-                    
-                        <li><a href="http://blog.csdn.net/qq_33834670">Pegu_CSDN</a></li>
-                    
-                        <li><a href="http://www.jianshu.com/users/08eecf6cf70b">Pegu_简书</a></li>
-                    
-                </ul>
-                
-    		</div>
-        
-	</div>
-</div>
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
 
 
     <!-- Footer -->
